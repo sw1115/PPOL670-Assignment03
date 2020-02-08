@@ -1,0 +1,35 @@
+---
+title: "Assignment03"
+author: "Shiying Wang"
+date: "2/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+This is a test R markdown document for extra credit homework:)
+
+The graph below shows the annual sales of electric vehicles from 2011 - 2015 in Maryland, New York, Pennsylvania and Virginia.
+
+```{r load-packages, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r read-data, include=FALSE}
+evsales <- read.csv("data/evsales.csv")
+```
+
+```{r simple-plot, echo = FALSE}
+evsales %>%
+  filter(State == "NY" | State == "PA" | State == "MD" | State == "VA") %>%
+  ggplot(mapping = aes(x = Year, y = sales_BEVPHEV, fill = Year)) + 
+  geom_col() +
+  ggtitle("EV sales by States, 2011 - 2015") + 
+  scale_y_continuous("Sales of Electric Vehicles") +
+  facet_wrap(~StateName)
+```
+

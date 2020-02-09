@@ -71,3 +71,24 @@ evsales %>%
 ```
 
 ### Figure 3.
+
+```{r third-graph}
+library(mapproj)
+library(maps)
+us_states <- map_data("state")
+
+evsales <- evsales %>% 
+  rename("region" = StateName) 
+
+evsales$region <- tolower(evsales$region)
+
+us_states_sales <- left_join(us_states, evsales)
+
+us_states_sales %>%
+  filter(Year == "2011") %>%
+  ggplot(mapping = aes(x = long, y = lat, group = group, fill = sales_BEVPHEV)) +
+  geom_polygon(color = "gray90", size = 0.1) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  labs(title = "State-level sales") + 
+  labs(fill = "Sales")
+```

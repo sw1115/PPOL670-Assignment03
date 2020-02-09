@@ -29,16 +29,32 @@ library(tidyverse)
 library(ggplot2)
 ```
 
-```{r read-data, include=FALSE}
+```{r read-data, include = FALSE}
 evsales <- read.csv("data/evsales.csv")
-emissions <- read.csv("data/emissions.csv")
+emissions <- read.csv("data/emissions.csv", check.names = FALSE, na = c("N/A"))
 ```
 
 ### Figure 1.
 
 The graph below shows the global trends of transportation sector emissions from 1990 to 2016. We can see that the transportation emissions are continuously growing.  
 
+```{r cleanup-emissions, include = FALSE}
+global <- emissions %>%
+  filter(Country == "World") %>%
+  pivot_longer(cols = 6:32, names_to = "Year", values_to = "emissions") %>%
+  arrange(Year)
 
+global$Year <- as.numeric(as.character(global$Year))
+```
+
+```{r first-graph}
+global %>%
+  ggplot(mapping = aes(x = Year, y = emissions)) + 
+  geom_point(color = "blue") +
+  ggtitle("Global transportation emissions, 1990 - 2016") + 
+  scale_y_continuous("Emissions (MtCO2e)") +
+  scale_x_continuous(breaks = seq(from = 1990, to = 2016, by = 5))
+```
 
 ### Figure 2.
 
@@ -54,3 +70,4 @@ evsales %>%
   facet_wrap(~StateName)
 ```
 
+### Figure 3.

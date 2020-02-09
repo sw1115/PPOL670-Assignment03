@@ -10,10 +10,20 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(message = FALSE)
 ```
 
-This is a test R markdown document for extra credit homework:)
+This is a test R markdown document for extra credit homework:)  
 
-The graph below shows the annual sales of electric vehicles from 2011 - 2015 in Maryland, New York, Pennsylvania and Virginia.
+***  
 
+Electrification is an important part of the solution to the challenge of growing transportation sector emissions because it eliminates tailpipe emissions and harnesses the potential to decarbonize the power grid. To encourage the development and adoption of electric vehicles in the United States, the federal government, the state governments and even many private stakeholders have offered various incentives. 
+
+The following graphs use the state-level EV policies and sales data from 2011 to 2015 to give some basic trends and insights for further research about the effectiveness of state-level EV policies.  
+
+***Data Source:***   
+1. Transportation sector emissions: [Climate Watch, World Resources Institute.](https://www.climatewatchdata.org/data-explorer/historical-emissions?historical-emissions-data-sources=51&historical-emissions-gases=201&historical-emissions-regions=WORLD&historical-emissions-sectors=624&page=1)  
+2. U.S. State-level EV sales: [Alliance of Automobile Manufactures](https://autoalliance.org/energy-environment/advanced-technology-vehicle-sales-dashboard/), IHS Markit.  
+3. U.S. State-level EV policies: [Wee et al.](https://www.sciencedirect.com/science/article/pii/S2352340919300071#ec0005), AFDC.
+
+***  
 ```{r load-packages, include=FALSE}
 library(tidyverse)
 library(ggplot2)
@@ -21,14 +31,25 @@ library(ggplot2)
 
 ```{r read-data, include=FALSE}
 evsales <- read.csv("data/evsales.csv")
+emissions <- read.csv("data/emissions.csv")
 ```
 
-```{r simple-plot, echo = FALSE}
+### Figure 1.
+
+The graph below shows the global trends of transportation sector emissions from 1990 to 2016. We can see that the transportation emissions are continuously growing.  
+
+
+
+### Figure 2.
+
+The graph below shows the annual sales of electric vehicles from 2011 - 2015 in Maryland, New York, Pennsylvania and Virginia.
+
+```{r second-graph}
 evsales %>%
   filter(State == "NY" | State == "PA" | State == "MD" | State == "VA") %>%
   ggplot(mapping = aes(x = Year, y = sales_BEVPHEV, fill = Year)) + 
   geom_col() +
-  ggtitle("EV sales by States, 2011 - 2015") + 
+  ggtitle("EV sales by states, 2011 - 2015") + 
   scale_y_continuous("Sales of Electric Vehicles") +
   facet_wrap(~StateName)
 ```

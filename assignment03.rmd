@@ -10,8 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(message = FALSE)
 ```
 
-This is a test R markdown document for extra credit homework:)  
-
 ***  
 
 Electrification is an important part of the solution to the challenge of growing transportation sector emissions because it eliminates tailpipe emissions and harnesses the potential to decarbonize the power grid. To encourage the development and adoption of electric vehicles in the United States, the federal government, the state governments and even many private stakeholders have offered various incentives. 
@@ -34,9 +32,9 @@ evsales <- read.csv("data/evsales.csv")
 emissions <- read.csv("data/emissions.csv", check.names = FALSE, na = c("N/A"))
 ```
 
-### Figure 1.
+### Global transportation emissions are continuously growing.
 
-The graph below shows the global trends of transportation sector emissions from 1990 to 2016. We can see that the transportation emissions are continuously growing.  
+The graph below shows the global trends of transportation sector emissions from 1990 to 2016. We can see that the transportation emissions are continuously growing. 
 
 ```{r cleanup-emissions, include = FALSE}
 global <- emissions %>%
@@ -51,13 +49,19 @@ global$Year <- as.numeric(as.character(global$Year))
 global %>%
   ggplot(mapping = aes(x = Year, y = emissions)) + 
   geom_point(color = "blue") +
-  labs(title = "Global Transportation Emissions",
+  labs(title = "Graph 1. Global Transportation Emissions",
        subtitle = "1990 - 2016") + 
   scale_y_continuous("Emissions (MtCO2e)") +
   scale_x_continuous(breaks = seq(from = 1990, to = 2016, by = 5))
 ```
 
-### Figure 2.
+### The trends of electric vehicles sales are quite different at the state-level.  
+
+Promoting electric vehicles (EV) can be an effective way to mitigate the fast growing transport emissions. Generally speaking, the sale of EV has increased in most of the states from 2011 to 2015.  
+
+Take a deeper look at the data, we can see different trends of sales at the state-level. For an instance, Washington and Texas have shown a persistent increase in sales. Georgia has the most dramatic change while the sale actually decreased from 2014 - 2015.
+
+Since the sale in California will siginificantly shift the scale of this graph, I will show the trend in California using a seperate graph. 
 
 ```{r get-mapdata, include = FALSE}
 library(mapproj)
@@ -97,34 +101,42 @@ theme_map <- function(base_size=9, base_family="") {
 library(viridis)
 
 us_states_sales %>%
-  filter(region != "california") %>%
+  filter(region != "california" & Year != "NA") %>%
   ggplot(mapping = aes(x = long, y = lat, group = group, fill = sales_BEVPHEV)) +
   geom_polygon(color = "gray90", size = 0.1) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
   scale_fill_viridis_c(option = "C") +
   labs(fill = "Sales",
-       title = "Electric Vehicles Sales by State (excluding California)",
+       title = "Graph 2. Electric Vehicles Sales by States (excluding California)",
        subtitle = "2011 - 2015") + 
   theme_map() +
   facet_wrap(~Year) +
   theme(legend.position = "bottom")
 ```
 
-### Figure 3.
-The graph below shows the annual sales of electric vehicles from 2011 - 2015 in California.  
+### California has the largest market share of electric vehicles in the U.S.
+
+The graph below shows the annual sales of electric vehicles from 2011 - 2015 in California. We can see that the sale of EV in California has increased continuously from 2011 to 2015, but at a decreasing rate.  
+
+From the comparison of the different scales of graph 2 and graph 3 we can also tell that California has a much larger market share of EV than other states.
+
 ```{r third-graph}
 evsales %>%
   filter(State == "CA") %>%
   ggplot(mapping = aes(x = Year, y = sales_BEVPHEV, fill = sales_BEVPHEV)) + 
   geom_col() +
-  labs(title = "Electric Vehicles Sales in California",
+  labs(title = "Graph 3. Electric Vehicles Sales in California",
        subtitle = "2011 - 2015",
        fill = "Sales") + 
   scale_y_continuous("Sales of Electric Vehicles") +
-  theme(legend.position = "bottom") 
+  theme(legend.position = "bottom")
 ```
 
-### Figure 4.
+### The sale of EV in Georgia has changed dramatically from 2011 to 2015.
+
+Since Georgia has the most dramatic change of sales among all the states, we can take a deeper look at the breakdown of the EV sales in Georgia.  
+
+Most of the increase came from the change in Battery EV sales, while the sales of plug-in hybrid EV barely changed from 2011 to 2015. However, the sale of BEV decreased almost 40 percent from 2014 to 2015. 
 ```{r fourth-graph}
 evsales %>%
   filter(State == "GA") %>%
@@ -137,5 +149,8 @@ evsales %>%
        subtitle = "2011 - 2015",
        fill = "Sales") + 
   scale_y_continuous("Sales of Electric Vehicles") +
-  theme(legend.position = "bottom") 
+  theme(legend.position = "bottom")
 ```
+
+### The heterogeneities among states. 
+Why there are heterogeneities among different states? And what kind of policies are most effective in different states? We can use the state-level policies data to conduct further research about the effectiveness of EV incentives.

@@ -51,7 +51,8 @@ global$Year <- as.numeric(as.character(global$Year))
 global %>%
   ggplot(mapping = aes(x = Year, y = emissions)) + 
   geom_point(color = "blue") +
-  ggtitle("Global transportation emissions, 1990 - 2016") + 
+  labs(title = "Global Transportation Emissions",
+       subtitle = "1990 - 2016") + 
   scale_y_continuous("Emissions (MtCO2e)") +
   scale_x_continuous(breaks = seq(from = 1990, to = 2016, by = 5))
 ```
@@ -106,10 +107,8 @@ us_states_sales %>%
        subtitle = "2011 - 2015") + 
   theme_map() +
   facet_wrap(~Year) +
-  theme(legend.position = "bottom") 
+  theme(legend.position = "bottom")
 ```
-
-
 
 ### Figure 3.
 The graph below shows the annual sales of electric vehicles from 2011 - 2015 in California.  

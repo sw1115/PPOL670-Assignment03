@@ -58,25 +58,14 @@ global %>%
 
 ### Figure 2.
 
-The graph below shows the annual sales of electric vehicles from 2011 - 2015 in Maryland, New York, Pennsylvania and Virginia.
-
-```{r second-graph}
-evsales %>%
-  filter(State == "NY" | State == "PA" | State == "MD" | State == "VA") %>%
-  ggplot(mapping = aes(x = Year, y = sales_BEVPHEV, fill = Year)) + 
-  geom_col() +
-  ggtitle("EV sales by states, 2011 - 2015") + 
-  scale_y_continuous("Sales of Electric Vehicles") +
-  facet_wrap(~StateName)
-```
-
-### Figure 3.
-
-```{r third-graph}
+```{r get-mapdata, include = FALSE}
 library(mapproj)
 library(maps)
+#get the state maps data
 us_states <- map_data("state")
+```
 
+```{r clean-sales, include = FALSE}
 evsales <- evsales %>% 
   rename("region" = StateName) 
 
@@ -84,11 +73,70 @@ evsales$region <- tolower(evsales$region)
 
 us_states_sales <- left_join(us_states, evsales)
 
+#change the themes
+theme_map <- function(base_size=9, base_family="") {
+    require(grid)
+    theme_bw(base_size=base_size, base_family=base_family) %+replace%
+        theme(axis.line=element_blank(),
+              axis.text=element_blank(),
+              axis.ticks=element_blank(),
+              axis.title=element_blank(),
+              panel.background=element_blank(),
+              panel.border=element_blank(),
+              panel.grid=element_blank(),
+              panel.spacing=unit(0, "lines"),
+              plot.background=element_blank(),
+              legend.justification = c(0,0),
+              legend.position = c(0,0)
+              )
+}
+```
+
+```{r second-graph}
+library(viridis)
+
 us_states_sales %>%
-  filter(Year == "2011") %>%
+  filter(region != "california") %>%
   ggplot(mapping = aes(x = long, y = lat, group = group, fill = sales_BEVPHEV)) +
   geom_polygon(color = "gray90", size = 0.1) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
-  labs(title = "State-level sales") + 
-  labs(fill = "Sales")
+  scale_fill_viridis_c(option = "C") +
+  labs(fill = "Sales",
+       title = "Electric Vehicles Sales by State (excluding California)",
+       subtitle = "2011 - 2015") + 
+  theme_map() +
+  facet_wrap(~Year) +
+  theme(legend.position = "bottom") 
+```
+
+
+
+### Figure 3.
+The graph below shows the annual sales of electric vehicles from 2011 - 2015 in California.  
+```{r third-graph}
+evsales %>%
+  filter(State == "CA") %>%
+  ggplot(mapping = aes(x = Year, y = sales_BEVPHEV, fill = sales_BEVPHEV)) + 
+  geom_col() +
+  labs(title = "Electric Vehicles Sales in California",
+       subtitle = "2011 - 2015",
+       fill = "Sales") + 
+  scale_y_continuous("Sales of Electric Vehicles") +
+  theme(legend.position = "bottom") 
+```
+
+### Figure 4.
+```{r fourth-graph}
+evsales %>%
+  filter(State == "GA") %>%
+  ggplot(mapping = aes(x = Year)) + 
+  geom_line(mapping = aes(y = sales_PHEV, colour = "Sales of Plug-in Hybrid EV")) + 
+  geom_point(mapping = aes(y = sales_PHEV)) +
+  geom_line(mapping = aes(y = sales_BEV, colour = "Sales of Battery EV")) + 
+  geom_point(mapping = aes(y = sales_BEV)) +
+  labs(title = "Electric Vehicles Sales in Georgia",
+       subtitle = "2011 - 2015",
+       fill = "Sales") + 
+  scale_y_continuous("Sales of Electric Vehicles") +
+  theme(legend.position = "bottom") 
 ```
